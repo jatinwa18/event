@@ -1,3 +1,5 @@
+import DiscoverEventsComponent from "../components/discover/DiscoverEvents";
+
 export default function DiscoverEvents() {
-  return <div>Discover Events Page</div>;
+  return <DiscoverEventsComponent />;
 }

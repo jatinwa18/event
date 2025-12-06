@@ -1,3 +1,5 @@
-export default function CreateEvent() {
-  return <div>Create Event Page</div>;
+import CreateEventComponent from "../components/create-event/CreateEvent";
+
+export default function CreateEventPage() {
+  return <CreateEventComponent />;
 }
