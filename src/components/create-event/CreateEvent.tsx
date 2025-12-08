@@ -269,28 +269,71 @@ const themeStyleBanner =
             <div className="bg-white/50 p-4 rounded-lg">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm">Require Approval</div>
-                  <div className="text-xs text-gray-700">
+                  <div className="text-sm text-gray-800">Require Approval</div>
+                  <div className="text-xs text-gray-800">
                     Attendees need host approval
                   </div>
                 </div>
+                {/* Replace the whole label block with this (no absolute positioning) */}
+<label
+  style={{
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 12,
+    cursor: "pointer",
+    userSelect: "none",
+  }}
+>
+  <input
+    type="checkbox"
+    checked={requireApproval}
+    onChange={() => setRequireApproval((v) => !v)}
+    className="sr-only"
+    aria-label="Require approval"
+    style={{ position: "absolute", opacity: 0, pointerEvents: "auto" }}
+  />
 
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={requireApproval}
-                    onChange={() => setRequireApproval((v) => !v)}
-                    className="sr-only"
-                  />
-                  <div
-                    className={`w-11 h-6 rounded-full transition-colors ${
-                      requireApproval ? "bg-indigo-500" : "bg-gray-500"
-                    }`}
-                  />
-                  <span className="ml-3 text-sm">
-                    {requireApproval ? "On" : "Off"}
-                  </span>
-                </label>
+  {/* Track (acts as container) */}
+  <div
+    role="switch"
+    aria-checked={requireApproval}
+    style={{
+      width: 44,
+      height: 24,
+      borderRadius: 9999,
+      background: requireApproval ? "#6366F1" : "#9CA3AF",
+      display: "flex",
+      alignItems: "center",
+      // padding ensures knob sits inside without absolute positioning
+      padding: 2,
+      boxSizing: "border-box",
+      transition: "background 180ms ease",
+    }}
+  >
+    {/* Knob - moved by marginLeft */}
+    <div
+      aria-hidden="true"
+      style={{
+        width: 20,
+        height: 20,
+        borderRadius: 9999,
+        background: "#ffffff",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
+        // move knob by margin-left when checked
+        marginLeft: requireApproval ? 0 : 0,
+        // use transform on the inner element to slide it to right
+        transform: requireApproval ? "translateX(20px)" : "translateX(0)",
+        transition: "transform 180ms ease",
+      }}
+    />
+  </div>
+
+  <span style={{ fontSize: 14, color: "#111" }}>{requireApproval ? "On" : "Off"}</span>
+</label>
+
+
+
+
               </div>
 
               {/* Ticket Section */}
