@@ -133,7 +133,7 @@ const themeStyleBanner =
 
 
   return (
-    <div className={`min-h-screen text-gray-900 p-6 md:p-12 ${themeStylePage}`}>
+    <div className={`min-h-screen text-black p-6 md:p-12 ${themeStylePage}`}>
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-gray-900">
 
         {/* LEFT COLUMN */}
@@ -154,16 +154,25 @@ const themeStyleBanner =
             </div>
 
             {/* Upload */}
-            <label className="absolute right-3 mt-7 bg-white p-2 rounded-full shadow cursor-pointer z-50">
-              <input
-                type="file"
-                accept="image/*"
-                ref={fileRef}
-                onChange={handleBannerChange}
-                className="hidden"
-              />
-              📁
-            </label>
+            <label
+  className="
+    absolute right-0 mt-7
+    flex items-center gap-2
+    px-2.5 py-2 rounded-full bg-yellow-100 cursor-pointer
+    shadow hover:bg-yellow-200 transition
+  "
+>
+  <input
+    type="file"
+    accept="image/*"
+    ref={fileRef}
+    onChange={handleBannerChange}
+    className="hidden"
+  />
+  <span className="text-lg">📂</span>
+  
+</label>
+
 
             {/* Remove Banner */}
             {bannerDataUrl && (
@@ -203,15 +212,13 @@ const themeStyleBanner =
           </div>
         </div>
 
-        {/* RIGHT COLUMN — FORM */}
         <div className="col-span-1 md:col-span-2">
           <form onSubmit={handleSubmit} className="space-y-6">
             <h1 className="text-4xl font-bold">Create Event</h1>
 
-            {/* Inputs */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm">Event Title</label>
+                <label className="text-sm font-semibold">Event Title</label>
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
@@ -221,7 +228,7 @@ const themeStyleBanner =
               </div>
 
               <div>
-                <label className="text-sm">Location</label>
+                <label className="text-sm font-semibold">Location</label>
                 <input
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
@@ -231,10 +238,9 @@ const themeStyleBanner =
               </div>
             </div>
 
-            {/* Times */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-2">
-                <label className="text-sm">Start</label>
+                <label className="text-sm font-semibold">Start</label>
                 <input
                   type="datetime-local"
                   value={start ?? ""}
@@ -244,7 +250,7 @@ const themeStyleBanner =
               </div>
 
               <div>
-                <label className="text-sm">End</label>
+                <label className="text-sm font-semibold">End</label>
                 <input
                   type="datetime-local"
                   value={end ?? ""}
@@ -254,9 +260,8 @@ const themeStyleBanner =
               </div>
             </div>
 
-            {/* Description */}
             <div>
-              <label className="text-sm">Description</label>
+              <label className="text-sm font-semibold">Description</label>
               <textarea
                 rows={4}
                 value={description}
@@ -265,73 +270,68 @@ const themeStyleBanner =
               />
             </div>
 
-            {/* Extra Settings */}
             <div className="bg-white/50 p-4 rounded-lg">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm text-gray-800">Require Approval</div>
+                  <div className="text-sm text-gray-800 font-semibold">Require Approval</div>
                   <div className="text-xs text-gray-800">
-                    Attendees need host approval
+                    Attendees need host approval.
                   </div>
                 </div>
-                {/* Replace the whole label block with this (no absolute positioning) */}
-<label
-  style={{
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 12,
-    cursor: "pointer",
-    userSelect: "none",
-  }}
->
-  <input
-    type="checkbox"
-    checked={requireApproval}
-    onChange={() => setRequireApproval((v) => !v)}
-    className="sr-only"
-    aria-label="Require approval"
-    style={{ position: "absolute", opacity: 0, pointerEvents: "auto" }}
-  />
 
-  {/* Track (acts as container) */}
-  <div
-    role="switch"
-    aria-checked={requireApproval}
-    style={{
-      width: 44,
-      height: 24,
-      borderRadius: 9999,
-      background: requireApproval ? "#6366F1" : "#9CA3AF",
-      display: "flex",
-      alignItems: "center",
-      // padding ensures knob sits inside without absolute positioning
-      padding: 2,
-      boxSizing: "border-box",
-      transition: "background 180ms ease",
-    }}
-  >
-    {/* Knob - moved by marginLeft */}
-    <div
-      aria-hidden="true"
-      style={{
-        width: 20,
-        height: 20,
-        borderRadius: 9999,
-        background: "#ffffff",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
-        // move knob by margin-left when checked
-        marginLeft: requireApproval ? 0 : 0,
-        // use transform on the inner element to slide it to right
-        transform: requireApproval ? "translateX(20px)" : "translateX(0)",
-        transition: "transform 180ms ease",
-      }}
-    />
-  </div>
+                <label
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 12,
+                    cursor: "pointer",
+                    userSelect: "none",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={requireApproval}
+                    onChange={() => setRequireApproval((v) => !v)}
+                    className="sr-only"
+                    aria-label="Require approval"
+                    style={{ position: "absolute", opacity: 0, pointerEvents: "auto" }}
+                  />
 
-  <span style={{ fontSize: 14, color: "#111" }}>{requireApproval ? "On" : "Off"}</span>
-</label>
-
-
+                  <div
+                    role="switch"
+                    aria-checked={requireApproval}
+                    style={{
+                      width: 44,
+                      height: 24,
+                      borderRadius: 9999,
+                      background: requireApproval ? "#6366F1" : "#9CA3AF",
+                      display: "flex",
+                      alignItems: "center",
+                      padding: 2,
+                      boxSizing: "border-box",
+                      transition: "background 180ms ease",
+                    }}
+                  >
+                    {/* Knob - moved by marginLeft */}
+                    <div
+                      aria-hidden="true"
+                      style={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: 9999,
+                        background: "#ffffff",
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
+                        // move knob by margin-left when checked
+                        marginLeft: requireApproval ? 0 : 0,
+                        // use transform on the inner element to slide it to right
+                        transform: requireApproval ? "translateX(20px)" : "translateX(0)",
+                        transition: "transform 180ms ease",
+                      }}
+                    />
+                  </div>
+                    
+                  <span style={{ fontSize: 14, color: "#111" }}>{requireApproval ? "On" : "Off"}</span>
+                </label>
 
 
               </div>
@@ -339,7 +339,7 @@ const themeStyleBanner =
               {/* Ticket Section */}
               <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <div className="text-sm">Tickets</div>
+                  <div className="text-sm font-semibold">Tickets</div>
                   <div className="flex gap-2 mt-2">
                     <button
                       type="button"
@@ -363,7 +363,7 @@ const themeStyleBanner =
                 </div>
 
                 <div>
-                  <label className="text-sm">Ticket Price</label>
+                  <label className="text-sm font-semibold">Ticket Price</label>
                   <input
                     type="number"
                     min={0}
@@ -378,7 +378,7 @@ const themeStyleBanner =
                 </div>
 
                 <div>
-                  <label className="text-sm">Capacity</label>
+                  <label className="text-sm font-semibold">Capacity</label>
                   <input
                     type="number"
                     min={1}
@@ -437,7 +437,7 @@ const themeStyleBanner =
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="w-[90%] md:w-3/4 bg-white/20 p-6 rounded-xl backdrop-blur">
             <div className="flex items-start justify-between">
-              <h2 className="text-2xl font-bold">Event Preview</h2>
+              <h2 className="text-2xl font-semibold">Event Preview</h2>
               <button
                 onClick={() => setShowPreview(false)}
                 className="px-3 py-1 bg-white/30 rounded"
