@@ -4,6 +4,8 @@ import { clearTheme } from "../../store/themeSlice";
 import type { RootState } from "../../store/store";
 
 import ThemeSelector from "../../components/ThemeSelector";
+import GeoapifyMapPicker from "../../components/GeoapifyMapPicker"; // <- import your component
+
 
 type EventPayload = {
   title: string;
@@ -17,7 +19,14 @@ type EventPayload = {
   capacity: number | null;
   theme: string | null;
   bannerDataUrl: string | null;
+
+  // NEW: lat/lng (optional)
+  lat?: number | null;
+  lng?: number | null;
 };
+
+const GEOAPIFY_KEY = import.meta.env.VITE_GEOAPIFY_API_KEY || "";
+console.log("Geoapify key →", GEOAPIFY_KEY); 
 
 export default function CreateEventPage() {
   const dispatch = useDispatch();
@@ -34,12 +43,21 @@ export default function CreateEventPage() {
   const [ticketPrice, setTicketPrice] = useState<number | null>(null);
   const [capacity, setCapacity] = useState<number | null>(null);
 
+  // NEW: lat/lng for selected place
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
+
   const [errors, setErrors] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
 
   const [bannerDataUrl, setBannerDataUrl] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
+
+  
+
+
+
 
   // Validation
   useEffect(() => {
@@ -84,6 +102,8 @@ export default function CreateEventPage() {
       capacity,
       theme,
       bannerDataUrl,
+      lat,
+      lng,
     };
 
     setShowPreview(true);
@@ -100,46 +120,42 @@ export default function CreateEventPage() {
   }
 
   // THEME → FULL PAGE BACKGROUND STYLE
- const themeStylePage =
-  theme === "Confetti"
-    ? "bg-gradient-to-br from-purple-600 via-pink-500 to-yellow-300"
-    : theme === "Minimal"
-    ? "bg-gray-100"
-    : theme === "Dark"
-    ? "bg-[#0f0f0f] text-white"
-    : theme === "Neon"
-    ? "bg-black text-[#39ff14]"
-    : theme === "Ocean"
-    ? "bg-gradient-to-br from-blue-500 via-cyan-400 to-blue-700"
-    : theme === "Sunset"
-    ? "bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600"
-    : theme === "Galaxy"
-    ? "bg-gradient-to-br from-indigo-900 via-purple-800 to-black"
-    : "bg-[#523444]"; // fallback
+  const themeStylePage =
+    theme === "Confetti"
+      ? "bg-gradient-to-br from-purple-600 via-pink-500 to-yellow-300"
+      : theme === "Minimal"
+      ? "bg-gray-100"
+      : theme === "Dark"
+      ? "bg-[#0f0f0f] text-white"
+      : theme === "Neon"
+      ? "bg-black text-[#39ff14]"
+      : theme === "Ocean"
+      ? "bg-gradient-to-br from-blue-500 via-cyan-400 to-blue-700"
+      : theme === "Sunset"
+      ? "bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600"
+      : theme === "Galaxy"
+      ? "bg-gradient-to-br from-indigo-900 via-purple-800 to-black"
+      : "bg-[#523444]"; // fallback
 
-
-const themeStyleBanner =
-  theme === "Confetti"
-    ? "bg-gradient-to-br from-purple-500 via-pink-400 to-yellow-300"
-    : theme === "Minimal"
-    ? "bg-gray-200"
-    : theme === "Ocean"
-    ? "bg-gradient-to-br from-blue-400 via-cyan-300 to-blue-600"
-    : theme === "Sunset"
-    ? "bg-gradient-to-br from-orange-400 via-pink-400 to-purple-500"
-    : theme === "Galaxy"
-    ? "bg-gradient-to-br from-indigo-800 via-purple-700 to-black"
-    : "bg-gradient-to-br from-pink-400 via-red-500 to-yellow-400";
-
+  const themeStyleBanner =
+    theme === "Confetti"
+      ? "bg-gradient-to-br from-purple-500 via-pink-400 to-yellow-300"
+      : theme === "Minimal"
+      ? "bg-gray-200"
+      : theme === "Ocean"
+      ? "bg-gradient-to-br from-blue-400 via-cyan-300 to-blue-600"
+      : theme === "Sunset"
+      ? "bg-gradient-to-br from-orange-400 via-pink-400 to-purple-500"
+      : theme === "Galaxy"
+      ? "bg-gradient-to-br from-indigo-800 via-purple-700 to-black"
+      : "bg-gradient-to-br from-pink-400 via-red-500 to-yellow-400";
 
   return (
     <div className={`min-h-screen text-black p-6 md:p-12 ${themeStylePage}`}>
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-gray-900">
-
         {/* LEFT COLUMN */}
         <div className="col-span-1">
           <div className="relative w-full">
-
             {/* Banner + THEME PREVIEW */}
             <div
               className={`h-64 w-full rounded-xl shadow-lg overflow-hidden flex items-center justify-center ${themeStyleBanner}`}
@@ -147,32 +163,28 @@ const themeStyleBanner =
               {bannerDataUrl ? (
                 <img src={bannerDataUrl} className="object-cover h-full w-full" />
               ) : (
-                <div className="text-gray-800 font-bold text-xl">
-                  Event Banner Preview
-                </div>
+                <div className="text-gray-800 font-bold text-xl">Event Banner Preview</div>
               )}
             </div>
 
             {/* Upload */}
             <label
-  className="
+              className="
     absolute right-0 mt-7
     flex items-center gap-2
     px-2.5 py-2 rounded-full bg-yellow-100 cursor-pointer
     shadow hover:bg-yellow-200 transition
   "
->
-  <input
-    type="file"
-    accept="image/*"
-    ref={fileRef}
-    onChange={handleBannerChange}
-    className="hidden"
-  />
-  <span className="text-lg">📂</span>
-  
-</label>
-
+            >
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileRef}
+                onChange={handleBannerChange}
+                className="hidden"
+              />
+              <span className="text-lg">📂</span>
+            </label>
 
             {/* Remove Banner */}
             {bannerDataUrl && (
@@ -231,12 +243,35 @@ const themeStyleBanner =
                 <label className="text-sm font-semibold">Location</label>
                 <input
                   value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  onChange={(e) => {
+                    setLocation(e.target.value);
+                    setLat(null); setLng(null);
+                  }}
+                  placeholder="Search address..."
                   className="w-full mt-2 p-3 rounded-lg bg-white/60"
-                  placeholder="Offline or virtual link"
                 />
               </div>
             </div>
+
+            {/* MAP SECTION - full width below title/location inputs */}
+            {location && (
+              <div className="bg-white/40 p-4 rounded-lg">
+                <div className="mt-2">
+                  <GeoapifyMapPicker
+                    apiKey={GEOAPIFY_KEY}
+                    address={location}
+                    onAddressChange={(v) => {
+                      setLocation(v);
+                      setLat(null); setLng(null);
+                    }}
+                    onSelectLocation={(latVal, lngVal, formatted) => {
+                      setLat(latVal); setLng(lngVal); setLocation(formatted);
+                    }}
+                    country="in" 
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-2">
@@ -274,9 +309,7 @@ const themeStyleBanner =
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-sm text-gray-800 font-semibold">Require Approval</div>
-                  <div className="text-xs text-gray-800">
-                    Attendees need host approval.
-                  </div>
+                  <div className="text-xs text-gray-800">Attendees need host approval.</div>
                 </div>
 
                 <label
@@ -312,7 +345,6 @@ const themeStyleBanner =
                       transition: "background 180ms ease",
                     }}
                   >
-                    {/* Knob - moved by marginLeft */}
                     <div
                       aria-hidden="true"
                       style={{
@@ -321,19 +353,14 @@ const themeStyleBanner =
                         borderRadius: 9999,
                         background: "#ffffff",
                         boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
-                        // move knob by margin-left when checked
-                        marginLeft: requireApproval ? 0 : 0,
-                        // use transform on the inner element to slide it to right
                         transform: requireApproval ? "translateX(20px)" : "translateX(0)",
                         transition: "transform 180ms ease",
                       }}
                     />
                   </div>
-                    
+
                   <span style={{ fontSize: 14, color: "#111" }}>{requireApproval ? "On" : "Off"}</span>
                 </label>
-
-
               </div>
 
               {/* Ticket Section */}
@@ -344,18 +371,14 @@ const themeStyleBanner =
                     <button
                       type="button"
                       onClick={() => setTicketsFree(true)}
-                      className={`px-3 py-2 rounded-md ${
-                        ticketsFree ? "bg-indigo-600 text-white" : "bg-white/50"
-                      }`}
+                      className={`px-3 py-2 rounded-md ${ticketsFree ? "bg-indigo-600 text-white" : "bg-white/50"}`}
                     >
                       Free
                     </button>
                     <button
                       type="button"
                       onClick={() => setTicketsFree(false)}
-                      className={`px-3 py-2 rounded-md ${
-                        !ticketsFree ? "bg-indigo-600 text-white" : "bg-white/50"
-                      }`}
+                      className={`px-3 py-2 rounded-md ${!ticketsFree ? "bg-indigo-600 text-white" : "bg-white/50"}`}
                     >
                       Paid
                     </button>
@@ -369,9 +392,7 @@ const themeStyleBanner =
                     min={0}
                     disabled={ticketsFree}
                     value={ticketPrice ?? ""}
-                    onChange={(e) =>
-                      setTicketPrice(e.target.value ? Number(e.target.value) : null)
-                    }
+                    onChange={(e) => setTicketPrice(e.target.value ? Number(e.target.value) : null)}
                     className="w-full mt-2 p-3 rounded-lg bg-white/60"
                     placeholder="0"
                   />
@@ -383,9 +404,7 @@ const themeStyleBanner =
                     type="number"
                     min={1}
                     value={capacity ?? ""}
-                    onChange={(e) =>
-                      setCapacity(e.target.value ? Number(e.target.value) : null)
-                    }
+                    onChange={(e) => setCapacity(e.target.value ? Number(e.target.value) : null)}
                     className="w-full mt-2 p-3 rounded-lg bg-white/60"
                     placeholder="Unlimited"
                   />
@@ -397,10 +416,7 @@ const themeStyleBanner =
 
             {/* Buttons */}
             <div className="flex items-center gap-4">
-              <button
-                type="submit"
-                className="px-6 py-3 bg-[#3b2330] text-white rounded-lg font-semibold shadow"
-              >
+              <button type="submit" className="px-6 py-3 bg-[#3b2330] text-white rounded-lg font-semibold shadow">
                 Create Event
               </button>
 
@@ -408,17 +424,11 @@ const themeStyleBanner =
                 type="button"
                 onClick={() => {
                   setTitle("My Demo Party");
-                  setStart(
-                    new Date(Date.now() + 60 * 60 * 1000)
-                      .toISOString()
-                      .slice(0, 16)
-                  );
-                  setEnd(
-                    new Date(Date.now() + 2 * 60 * 60 * 1000)
-                      .toISOString()
-                      .slice(0, 16)
-                  );
+                  setStart(new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 16));
+                  setEnd(new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString().slice(0, 16));
                   setLocation("Virtual / Zoom");
+                  setLat(null);
+                  setLng(null);
                 }}
                 className="px-4 py-2 bg-white/50 rounded-lg"
               >
@@ -438,10 +448,7 @@ const themeStyleBanner =
           <div className="w-[90%] md:w-3/4 bg-white/20 p-6 rounded-xl backdrop-blur">
             <div className="flex items-start justify-between">
               <h2 className="text-2xl font-semibold">Event Preview</h2>
-              <button
-                onClick={() => setShowPreview(false)}
-                className="px-3 py-1 bg-white/30 rounded"
-              >
+              <button onClick={() => setShowPreview(false)} className="px-3 py-1 bg-white/30 rounded">
                 Close
               </button>
             </div>
@@ -466,17 +473,14 @@ const themeStyleBanner =
                   <div>End: {end}</div>
                   <div>Location: {location}</div>
                   <div>Theme: {theme ?? "None"}</div>
-                  <div>
-                    Tickets: {ticketsFree ? "Free" : `Paid — ₹${ticketPrice}`}
-                  </div>
+                  <div>Tickets: {ticketsFree ? "Free" : `Paid — ₹${ticketPrice}`}</div>
                   <div>Capacity: {capacity ?? "Unlimited"}</div>
-                  <div>
-                    Require Approval: {requireApproval ? "Yes" : "No"}
-                  </div>
+                  <div>Require Approval: {requireApproval ? "Yes" : "No"}</div>
+                  <div>Latitude: {lat ?? "—"}</div>
+                  <div>Longitude: {lng ?? "—"}</div>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       )}
